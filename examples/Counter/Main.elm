@@ -5,6 +5,8 @@ import NativeUi.Style as Style exposing (defaultTransform)
 import NativeUi.Elements as Elements exposing (..)
 import NativeUi.Events exposing (..)
 import NativeUi.Image as Image exposing (..)
+import NativeApi.StyleSheet as StyleSheet
+import Dict
 
 
 -- MODEL
@@ -49,17 +51,29 @@ view count =
             { uri = "https://raw.githubusercontent.com/futurice/spiceprogram/master/assets/img/logo/chilicorn_no_text-128.png"
             , cache = Just ForceCache
             }
+
+        styleSheet =
+            StyleSheet.create
+                [ ( "image"
+                  , [ Style.height 64
+                    , Style.width 64
+                    , Style.marginBottom 30
+                    , Style.marginTop 30
+                    ]
+                  )
+                ]
+
+        style =
+            styleSheet
+                |> Dict.get "image"
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
     in
         Elements.view
             [ Ui.style [ Style.alignItems "center" ]
             ]
             [ image
-                [ Ui.style
-                    [ Style.height 64
-                    , Style.width 64
-                    , Style.marginBottom 30
-                    , Style.marginTop 30
-                    ]
+                [ Ui.stylesheet style
                 , source imageSource
                 ]
                 []
@@ -86,24 +100,37 @@ view count =
 
 button : Msg -> String -> String -> Node Msg
 button msg color content =
-    text
-        [ Ui.style
-            [ Style.color "white"
-            , Style.textAlign "center"
-            , Style.backgroundColor color
-            , Style.paddingTop 5
-            , Style.paddingBottom 5
-            , Style.width 30
-            , Style.fontWeight "bold"
-            , Style.shadowColor "#000"
-            , Style.shadowOpacity 0.25
-            , Style.shadowOffset 1 1
-            , Style.shadowRadius 5
-            , Style.transform { defaultTransform | rotate = Just "10deg" }
+    let
+        styleSheet =
+            StyleSheet.create
+                [ ( "button"
+                  , [ Style.color "white"
+                    , Style.textAlign "center"
+                    , Style.backgroundColor color
+                    , Style.paddingTop 5
+                    , Style.paddingBottom 5
+                    , Style.width 30
+                    , Style.fontWeight "bold"
+                    , Style.shadowColor "#000"
+                    , Style.shadowOpacity 0.25
+                    , Style.shadowOffset 1 1
+                    , Style.shadowRadius 5
+                    , Style.transform { defaultTransform | rotate = Just "10deg" }
+                    ]
+                  )
+                ]
+
+        style =
+            styleSheet
+                |> Dict.get "button"
+                |> Maybe.map List.singleton
+                |> Maybe.withDefault []
+    in
+        text
+            [ Ui.stylesheet style
+            , onPress msg
             ]
-        , onPress msg
-        ]
-        [ Ui.string content ]
+            [ Ui.string content ]
 
 
 
